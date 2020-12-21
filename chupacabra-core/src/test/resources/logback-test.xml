@@ -1,0 +1,20 @@
+<configuration>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <!-- this is the default pattern -->
+            <!--pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern-->
+
+            <!-- we need to use this pattern for logstash/kibana to index our logs -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--<logger name="org.apache.curator" level="warn" />-->
+
+    <root level="info">
+        <appender-ref ref="stdout" />
+    </root>
+
+</configuration>
