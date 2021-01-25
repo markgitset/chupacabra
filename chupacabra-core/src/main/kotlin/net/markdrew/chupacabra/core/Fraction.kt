@@ -2,16 +2,18 @@ package net.markdrew.chupacabra.core
 
 @Suppress("MemberVisibilityCanPrivate")
 data class Fraction(val numerator: Int, val denominator: Int) : Number() {
-    override fun toByte(): Byte = toDouble().toByte()
+    override fun toByte(): Byte = toInt().toByte()
     override fun toChar(): Char = toDouble().toChar()
     override fun toDouble(): Double = numerator.toDouble() / denominator
     override fun toFloat(): Float = toDouble().toFloat()
     override fun toInt(): Int = toDouble().toInt()
     override fun toLong(): Long = toDouble().toLong()
-    override fun toShort(): Short = toDouble().toShort()
+    override fun toShort(): Short = toInt().toShort()
     override fun toString(): String = "$numerator/$denominator"
 
-    operator fun times(factor: Fraction): Fraction = Fraction(numerator * factor.numerator, denominator * factor.denominator)
+    operator fun times(factor: Fraction): Fraction =
+        Fraction(numerator * factor.numerator, denominator * factor.denominator)
+
     operator fun times(factor: Double): Double = toDouble() * factor
 
     operator fun plus(addend: Fraction): Fraction =

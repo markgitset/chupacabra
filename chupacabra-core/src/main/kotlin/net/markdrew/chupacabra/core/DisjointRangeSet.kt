@@ -11,15 +11,16 @@ import java.util.NavigableSet
  * @param set a live view of the underlying map's keys to which most methods delegate
  */
 class DisjointRangeSet internal constructor(
-        internal val map: DisjointRangeMap<Unit>,
-        private val set: NavigableSet<IntRange> = map.navigableKeySet()) : NavigableSet<IntRange> by set {
+    internal val map: DisjointRangeMap<in Any>,
+    private val set: NavigableSet<IntRange> = map.navigableKeySet(),
+) : NavigableSet<IntRange> by set {
 
     /**
      * Constructs a new [DisjointRangeSet] from a [Collection] of [IntRange]s
      *
      * @param c collection of [IntRange]s
      */
-    constructor(c: Collection<IntRange>) : this(DisjointRangeMap<Unit>()) {
+    constructor(c: Collection<IntRange>) : this(DisjointRangeMap<Any>()) {
         addAll(c)
     }
 
@@ -35,8 +36,8 @@ class DisjointRangeSet internal constructor(
      *
      * @param element the [IntRange] to add to this set
      * @throws IllegalArgumentException if the given [IntRange] is empty
-     * @throws IllegalStateException if the given [IntRange] is not already present and it intersects any [IntRange]s that
-     *              are already in this set
+     * @throws IllegalStateException if the given [IntRange] is not already present and it intersects any [IntRange]s
+     *              that are already in this set
      */
     override fun add(element: IntRange): Boolean {
         map[element] = Unit
@@ -48,11 +49,11 @@ class DisjointRangeSet internal constructor(
      *
      * @param element the [IntRange] to add to this set
      * @throws IllegalArgumentException if the given [IntRange] is empty
-     * @throws IllegalStateException if the given [IntRange] is not already present and it intersects any [IntRange]s that
-     *              are already in this set
+     * @throws IllegalStateException if the given [IntRange] is not already present and it intersects any [IntRange]s
+     *              that are already in this set
      */
     fun addForcefully(element: IntRange): DisjointRangeSet = DisjointRangeSet(
-            map.putForcefully(element, Unit)
+        map.putForcefully(element, Unit)
     )
 
     /**
@@ -76,8 +77,13 @@ class DisjointRangeSet internal constructor(
     fun rangeContaining(position: Int): IntRange? = map.keyContaining(position)
 
     /**
-     * Efficiently finds the subset of ranges that are enclosed by the given range. More specifically, returns a subset of this
-     * set that only includes those ranges for which `r.encloses(t) == true`, where t is each range in this set.
+     * Finds and returns the value which encloses the given range, or null if no such value exists in this set.
+     */
+    fun enclosing(range: IntRange): IntRange? = map.keyEnclosing(range)
+
+    /**
+     * Efficiently finds the subset of ranges that are enclosed by the given range. More specifically, returns a subset
+     * of this set that only includes those ranges for which `r.encloses(t) == true`, where t is each range in this set.
      *
      * @param r the range which each of the resulting ranges must be enclosed by
      * @return the set of ranges in this set that are enclosed by the given range
@@ -85,20 +91,18 @@ class DisjointRangeSet internal constructor(
     fun rangesEnclosedBy(r: IntRange): DisjointRangeSet = DisjointRangeSet(map.enclosedBy(r))
 
     /**
-     * Efficiently finds the subset of ranges that are intersected by the given range. More specifically, returns a subset of
-     * [IntRange]s that only includes those ranges for which `r.intersects(t) == true`, where t is each range in
-     * this set.
+     * Efficiently finds the subset of ranges that are intersected by the given range. More specifically, returns a
+     * subset of [IntRange]s that only includes those ranges for which `r.intersects(t) == true`, where t is each range
+     * in this set.
      *
      * @param r the range which each of the resulting ranges must intersect
      * @return the set of ranges in this set that are intersected by the given range
      */
-    fun rangesIntersectedBy(r: IntRange): DisjointRangeSet = DisjointRangeSet(
-            map.intersectedBy(r)
-    )
+    fun rangesIntersectedBy(r: IntRange): DisjointRangeSet = DisjointRangeSet(map.intersectedBy(r))
 
     /**
-     * Removes the given range from this set, modifying any contained ranges that intersect the given range as needed.  A couple
-     * of illustrative examples:
+     * Removes the given range from this set, modifying any contained ranges that intersect the given range as needed.
+     * A couple of illustrative examples:
      * <pre>
      * { [0,4], [6,10], [12,16], [18,22], [24,28] }  -  [7,20]  =  { [0,4], [6,6], [21,22], [24,28] }
      *                                   { [0,28] }  -  [7,20]  =  { [0,6], [21,28] }
@@ -140,25 +144,27 @@ class DisjointRangeSet internal constructor(
 
     /**
      * Builds a new [DisjointRangeSet] from this one that only contains ranges (or parts of ranges) that are enclosed by
-     * ranges in the given [mask].  I.e., any ranges already enclosed by a range in [mask] will be retained as-is, any ranges
-     * intersecting a range in [mask] will be truncated to the part that intersects, and any other ranges will be dropped.
+     * ranges in the given [mask].  I.e., any ranges already enclosed by a range in [mask] will be retained as-is, any
+     * ranges intersecting a range in [mask] will be truncated to the part that intersects, and any other ranges will be
+     * dropped.
      */
     fun maskedBy(mask: DisjointRangeSet): DisjointRangeSet = DisjointRangeSet(map.maskedBy(mask))
 
     /**
-     * Builds a new [DisjointRangeMap] that combines this one with another one by splitting any non-identical, intersecting
-     * ranges (greatest common divisor, or GCD). The values of the resulting map will come from the given map if the key range
-     * was in the map.  Otherwise, the values will be [nullValue] (since [DisjointRangeMap]s don't allow null values).
+     * Builds a new [DisjointRangeMap] that combines this one with another one by splitting any non-identical,
+     * intersecting ranges (greatest common divisor, or GCD). The values of the resulting map will come from the given
+     * map if the key range was in the map.  Otherwise, the values will be [nullValue] (since [DisjointRangeMap]s don't
+     * allow null values).
      */
-    fun <U> gcdAlignment(other: DisjointRangeMap<U>, nullValue: U): DisjointRangeMap<U> =
+    fun <U : Any> gcdAlignment(other: DisjointRangeMap<U>, nullValue: U): DisjointRangeMap<U> =
         map.gcdAlignment(other) { _, v -> v ?: nullValue }
 
     /**
-     * Builds a new [DisjointRangeSet] that combines this one with another one by splitting any non-identical, intersecting
-     * ranges (greatest common divisor, or GCD).
+     * Builds a new [DisjointRangeSet] that combines this one with another one by splitting any non-identical,
+     * intersecting ranges (greatest common divisor, or GCD).
      */
     fun gcdAlignment(other: DisjointRangeSet): DisjointRangeSet =
-        DisjointRangeSet(map.gcdAlignment(other.map) { _, _ -> Unit })
+        DisjointRangeSet(map.gcdAlignment(other.map) { _, _ -> })
 
     /**
      * Returns the [IntRange] that just contains all the ranges in this set, or [IntRange.EMPTY] if this set is empty.
@@ -166,15 +172,15 @@ class DisjointRangeSet internal constructor(
     fun boundingRange(): IntRange = map.boundingRange()
 
     /**
-     * True if and only if a single range in this [DisjointRangeSet] encloses the given non-empty [IntRange].  Note that this
-     * means that two adjacent ranges in this set whose union encloses the given range is not sufficient for this function to
-     * return true. For example, { [1..5], [6..10] } encloses [3..5], but does NOT enclose [3..6].
+     * True if and only if a single range in this [DisjointRangeSet] encloses the given non-empty [IntRange].  Note that
+     * this means that two adjacent ranges in this set whose union encloses the given range is not sufficient for this
+     * function to return true. For example, { [1..5], [6..10] } encloses [3..5], but does NOT enclose [3..6].
      */
     fun encloses(r: IntRange): Boolean = map.entryEnclosing(r) != null
 
     /**
-     * Efficiently finds the set of ranges in this set that are enclosed by the given range. More specifically, returns a
-     * remove-only, live view of this set that only includes those ranges in this set for which `r.encloses(t) ==
+     * Efficiently finds the set of ranges in this set that are enclosed by the given range. More specifically, returns
+     * a remove-only, live view of this set that only includes those ranges in this set for which `r.encloses(t) ==
      * true`, where t is each range in this set.
      *
      * @param r the range which each of the resulting ranges must be enclosed by
@@ -189,3 +195,5 @@ class DisjointRangeSet internal constructor(
     override fun toString(): String = set.toString()
 
 }
+
+fun Sequence<IntRange>.toDisjointRangeSet(): DisjointRangeSet = DisjointRangeSet().also { it += this }

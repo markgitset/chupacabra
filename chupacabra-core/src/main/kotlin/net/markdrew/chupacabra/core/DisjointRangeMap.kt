@@ -6,13 +6,11 @@ import kotlin.collections.MutableMap.MutableEntry
 
 /**
  * A [NavigableMap] with disjoint (non-overlapping) [IntRange] keys. The primary purpose of this set is to provide some
- * well-tested methods (e.g., [enclosedBy], [intersectedBy], etc.) that make operations with another
- * [IntRange] both easy and much more efficient than a naive implementation not using this class.  Note that this map does not
- * allow null values.
+ * well-tested methods (e.g., [enclosedBy], [intersectedBy], etc.) that make operations with another [IntRange] both
+ * easy and much more efficient than a naive implementation not using this class.  Note that this map does not allow
+ * null values.
  */
-class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T>(
-        RANGE_COMPARATOR
-) {
+class DisjointRangeMap<T : Any>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T>(RANGE_COMPARATOR) {
 
     init {
         putAll(pairs)
@@ -37,7 +35,6 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
      */
     override fun put(key: IntRange, value: T): T? {
         if (key.isEmpty()) throw IllegalArgumentException("Empty range keys are not allowed")
-        if (value == null) throw NullPointerException("null values are not allowed")
         if (!containsKey(key)) {
             val intersections = internalIntersectedBy(key)
             if (!intersections.isEmpty()) {
@@ -60,7 +57,6 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
      */
     fun putForcefully(key: IntRange, value: T): DisjointRangeMap<T> {
         if (key.isEmpty()) throw IllegalArgumentException("Empty range keys are not allowed")
-        if (value == null) throw NullPointerException("null values are not allowed")
         val displacedEntries = intersectedBy(key)
         for (k in displacedEntries.keys) remove(k)
         put(key, value)
@@ -75,7 +71,7 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
      * @throws IllegalStateException if any of the given [IntRange] keys intersects any [IntRange] keys already in this set
      */
     override fun putAll(from: Map<out IntRange, T>) {
-        from.forEach { r, value -> this[r] = value }
+        from.forEach { (r, value) -> this[r] = value }
     }
 
     /**
@@ -83,7 +79,7 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
      * (and which is not empty), puts the entry into this [DisjointRangeMap].
      */
     fun putAllNonIntersecting(from: Map<out IntRange, T>) {
-        from.forEach { r, value -> 
+        from.forEach { (r, value) ->
             if (!r.isEmpty() && internalIntersectedBy(r).isEmpty()) this[r] = value 
         }
     }
@@ -153,9 +149,9 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
         else entryContaining(r.first)?.let { if (it.key.contains(r.last)) it else null }
 
     /**
-     * Efficiently finds the set of range keys in this map that are enclosed by the given range. More specifically, returns an
-     * immutable view of the values in this map whose keys are entirely enclosed within the given range (i.e., for which
-     * `r.encloses(t) == true`, where t is each range key in this set).
+     * Efficiently finds the set of range keys in this map that are enclosed by the given range. More specifically,
+     * returns an immutable view of the values in this map whose keys are entirely enclosed within the given range
+     * (i.e., for which `r.encloses(t) == true`, where t is each range key in this set).
      *
      * @param r the range in which each of the resulting values must be enclosed
      * @return an immutable list of the values in this map that are enclosed by the given range
@@ -214,7 +210,7 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
      * @param subtrahend the map to subtract from this one
      * @return a copy of this map, but without any entries that intersect any key ranges of the given subtrahend map
      */
-    fun <U> minusIntersectedBy(subtrahend: DisjointRangeMap<U>): DisjointRangeMap<T> {
+    fun <U : Any> minusIntersectedBy(subtrahend: DisjointRangeMap<U>): DisjointRangeMap<T> {
         val result = DisjointRangeMap<T>()
         for ((key, value) in entries) {
             if (subtrahend.internalIntersectedBy(key).isEmpty()) {
@@ -231,7 +227,7 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
      * @param subtrahend the map to subtract from this one
      * @return a copy of this map, but without any entries that are enclosed by any key ranges of the given subtrahend map
      */
-    fun <U> minusEnclosedBy(subtrahend: DisjointRangeMap<U>): DisjointRangeMap<T> {
+    fun <U : Any> minusEnclosedBy(subtrahend: DisjointRangeMap<U>): DisjointRangeMap<T> {
         val result = DisjointRangeMap<T>()
         for ((key, value) in entries) {
             if (!subtrahend.encloses(key)) {
@@ -276,10 +272,10 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
     }
 
     /**
-     * Builds a new [DisjointRangeMap] from this one that only contains key ranges (or parts of ranges) that are enclosed by 
-     * key ranges in the given [mask].  I.e., any ranges already enclosed by a range in [mask] will be retained as-is, any ranges
-     * intersecting a range in [mask] will be truncated/split to the part(s) that intersects (if split, both keys will get the 
-     * same value), and any other ranges will be dropped.
+     * Builds a new [DisjointRangeMap] from this one that only contains key ranges (or parts of ranges) that are
+     * enclosed by key ranges in the given [mask].  I.e., any ranges already enclosed by a range in [mask] will be
+     * retained as-is, any ranges intersecting a range in [mask] will be truncated/split to the part(s) that intersects
+     * (if split, both keys will get the same value), and any other ranges will be dropped.
      */
     fun maskedBy(mask: DisjointRangeSet): DisjointRangeMap<T> = entries.flatMap { (k, v) ->
         // for each entry, yield 0 or more entries by intersecting it with ranges in the mask
@@ -290,20 +286,25 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
     }
 
     /**
-     * Builds a new [DisjointRangeMap] that combines this one with another one by splitting any non-identical, intersecting
-     * ranges (greatest common divisor, or GCD). The values of the resulting map will contain a [Pair] of the values from the two
-     * source maps (this map's values are first, and the other map's values are second).  Either item in the [Pair] value may be
-     * null (if the range only occurred in one map), but both [Pair] values will never be null.
+     * Builds a new [DisjointRangeMap] that combines this one with another one by splitting any non-identical,
+     * intersecting ranges (greatest common divisor, or GCD). The values of the resulting map will contain a [Pair] of
+     * the values from the two source maps (this map's values are first, and the other map's values are second).  Either
+     * item in the [Pair] value may be null (if the range only occurred in one map), but both [Pair] values will never
+     * be null.
      */
-    fun <U> gcdAlignment(other: DisjointRangeMap<U>): DisjointRangeMap<Pair<T?, U?>> = gcdAlignment(other, ::Pair)
+    fun <U : Any> gcdAlignment(other: DisjointRangeMap<U>): DisjointRangeMap<Pair<T?, U?>> = gcdAlignment(other, ::Pair)
+
+//    fun disjointRangeSetView(): DisjointRangeSet = DisjointRangeSet(this, navigableKeySet())
 
     /**
-     * Builds a new [DisjointRangeMap] that combines this one with another one by splitting any non-identical, intersecting
-     * ranges (greatest common divisor, or GCD). The values of the resulting map will contain a [Pair] of the values from the two
-     * source maps (this map's values are first, and the other map's values are second).  Either item in the [Pair] value may be
-     * null (if the range only occurred in one map), but both [Pair] values will never be null.
+     * Builds a new [DisjointRangeMap] that combines this one with another one by splitting any non-identical,
+     * intersecting ranges (greatest common divisor, or GCD). The values of the resulting map will contain a [Pair] of
+     * the values from the two source maps (this map's values are first, and the other map's values are second).  Either
+     * item in the [Pair] value may be null (if the range only occurred in one map), but both [Pair] values will never
+     * be null.
      */
-    fun <U, V> gcdAlignment(other: DisjointRangeMap<out U>, valueTransform: (T?, U?) -> V): DisjointRangeMap<V> {
+    fun <U : Any, V : Any> gcdAlignment(other: DisjointRangeMap<out U>,
+                                        valueTransform: (T?, U?) -> V): DisjointRangeMap<V> {
 
         val result: DisjointRangeMap<V> = DisjointRangeMap()
 
@@ -348,7 +349,9 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
     /**
      * Returns the [IntRange] that just contains all the key ranges of this map, or [IntRange.EMPTY] if this map is empty.
      */
-    fun boundingRange(): IntRange = if (isEmpty()) IntRange.EMPTY else firstKey().first..lastKey().last
+    fun boundingRange(): IntRange =
+        if (isEmpty()) IntRange.EMPTY
+        else firstKey().first..lastKey().last
 
     // TODO figure out how to make this return a live view
 //    override val keys: DisjointRangeSet
@@ -381,3 +384,6 @@ class DisjointRangeMap<T>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRange, T
     }
 
 }
+
+fun <T : Any> Sequence<Pair<IntRange, T>>.toDisjointRangeMap(): DisjointRangeMap<T> =
+    DisjointRangeMap<T>().also { it += this }

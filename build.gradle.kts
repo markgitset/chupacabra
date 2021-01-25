@@ -1,7 +1,7 @@
 plugins {
     id("com.palantir.git-version") version "0.12.0-rc2"
-    kotlin("jvm").version("1.4.20")
-    id("java-library")
+    kotlin("jvm").version("1.4.21")
+//    id("java-library")
     id("jacoco")
     id("maven-publish")
     //id("org.jetbrains.dokka") version "0.9.18" apply false
@@ -71,12 +71,12 @@ subprojects {
 
     }
 
-    java {
-        val targetJavaVersion: String by project
-        val targetJavaVersionObj = JavaVersion.toVersion(targetJavaVersion)
-        sourceCompatibility = targetJavaVersionObj
-        targetCompatibility = targetJavaVersionObj
-    }
+//    java {
+//        val targetJavaVersion: String by project
+//        val targetJavaVersionObj = JavaVersion.toVersion(targetJavaVersion)
+//        sourceCompatibility = targetJavaVersionObj
+//        targetCompatibility = targetJavaVersionObj
+//    }
 
     tasks {
 
@@ -84,11 +84,10 @@ subprojects {
          * Some Kotlin compiler configuration
          */
         val kotlinJvmTargetVersion: String by project
-        compileKotlin {
-            kotlinOptions.jvmTarget = kotlinJvmTargetVersion
-        }
-        compileTestKotlin {
-            kotlinOptions.jvmTarget = kotlinJvmTargetVersion
+        withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+            kotlinOptions {
+                jvmTarget = kotlinJvmTargetVersion
+            }
         }
 
         // build a tests jar
@@ -129,20 +128,6 @@ subprojects {
                 artifact(tasks["testJar"]) // tests artifact
             }
         }
-        //repositories {
-        //    maven {
-        //        // if version looks like 1.0-2-gdd66ea8 or 1.0-2-gdd66ea8.dirty (i.e., has a git hash in it),
-        //        // publish as an auto-release; otherwise, publish as a release
-        //        val repoType = project.version =~ /[a-f0-9]{7}/ ? "auto-releases" : "releases"
-        //        url "https://${privateRepoHost}/repository/${repoType}"
-        //
-        //        credentials {
-        //            // these should be defined in ~/.gradle/gradle.properties
-        //            username project.properties["buildDevNexusUser"]
-        //            password project.properties["buildDevNexusPassword"]
-        //        }
-        //    }
-        //}
     }
 
 }
