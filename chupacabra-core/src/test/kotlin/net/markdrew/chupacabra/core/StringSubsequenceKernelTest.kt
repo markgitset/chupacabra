@@ -177,7 +177,7 @@ class StringSubsequenceKernelTest {
 
     @Disabled @Test
     fun testScalesLinearlyWithN() {
-        // Currently *seems* to scale as n^4?!
+        // Currently, *seems* to scale as n^4?!
         val s1 = "science is organized knowledge"
         val s2 = "wisdom is organized life"
         val times = LongArray(8)
@@ -218,7 +218,7 @@ class StringSubsequenceKernelTest {
 
     @Disabled @Test
     fun testScalesLinearlyWithLength() {
-        // Currently *seems* sub-linear
+        // Currently, *seems* sub-linear
         val s1 = "science is organized knowledge"
         val s2 = "wisdom is organized life"
 

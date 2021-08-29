@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("com.palantir.git-version") version "0.12.0-rc2"
     kotlin("jvm").version("1.4.21")
@@ -84,7 +86,7 @@ subprojects {
          * Some Kotlin compiler configuration
          */
         val kotlinJvmTargetVersion: String by project
-        withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        withType<KotlinCompile>().configureEach {
             kotlinOptions {
                 jvmTarget = kotlinJvmTargetVersion
             }
