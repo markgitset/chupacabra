@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.palantir.git-version") version "0.12.0-rc2"
-    kotlin("jvm").version("1.4.21")
+    id("com.palantir.git-version") version "0.15.0"
+    kotlin("jvm").version("1.7.10")
 //    id("java-library")
     id("jacoco")
     id("maven-publish")
@@ -57,15 +57,12 @@ subprojects {
         val kotlinCoroutinesVersion: String by project
 
         // implementation dependencies are used internally, and not exposed to consumers on their own compile classpath
-        implementation("io.github.microutils:kotlin-logging:1.6.22") // up-to-date as of 2018-10-03
+        implementation("io.github.microutils:kotlin-logging:2.1.23") // up-to-date as of 2022-08-13
         implementation(kotlin("stdlib-jdk8"))
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion")
 
         // Use JUnit test framework
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1") // up-to-date as of 2018-10-03
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1") // up-to-date as of 2018-10-03
-        // only required by IDEA?
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.1.1") // as of 2018-10-03 current is 1.3.1
+        testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
 
         // note that since this is a logging IMPLEMENTATION, it should ONLY be on the test classpath
         // clients of this library will provide their own SLF4J logging implementation
