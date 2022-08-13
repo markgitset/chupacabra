@@ -84,6 +84,17 @@ class DisjointRangeMap<T : Any>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRa
         }
     }
 
+    override fun putIfAbsent(key: IntRange, value: T): T? {
+        val prevValue = get(key)
+        return if (prevValue == null) {
+            if (intersects(key)) {
+                throw IllegalStateException("Given key intersects, but does not equal an already-present key")
+            }
+            put(key, value)
+            null
+        } else prevValue
+    }
+
     fun keyContaining(position: Int): IntRange? = entryContaining(position)?.key
 
     /**
