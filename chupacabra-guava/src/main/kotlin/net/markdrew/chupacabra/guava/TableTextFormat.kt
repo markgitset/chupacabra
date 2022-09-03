@@ -51,7 +51,7 @@ class TableTextFormat<R, C, V>(
             .map { formatRowHeader(it).length }
             .plus(labelsLabel.length)
             .plus(summarizeColLabel.length)
-            .max() ?: error("this will never happen")
+            .max()
 
         val colSepWidth = columnSeparator.length
         val maxCol = ((maxTableWidth - rowHeaderWidth - nCols * colSepWidth)/nCols)

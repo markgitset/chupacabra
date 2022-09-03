@@ -1,9 +1,11 @@
 package net.markdrew.chupacabra.core
 
+import java.util.Locale
+
 /**
  * Returns the lower-cased name of this enum
  */
-inline fun <reified T : Enum<T>> T.toLowerCase() = name.toLowerCase()
+inline fun <reified T : Enum<T>> T.toLowerCase() = name.lowercase()
 
 /**
  * Parses the given string as an enum.  By default, the parse is case-insensitive.  If the enum

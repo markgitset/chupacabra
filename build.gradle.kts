@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.palantir.git-version") version "0.15.0"
-    kotlin("jvm").version("1.7.10")
+    kotlin("jvm") version "1.7.10"
 //    id("java-library")
     id("jacoco")
     id("maven-publish")
@@ -12,7 +12,6 @@ plugins {
 // declare repositories in which to find dependencies (in a reusable way, since we need it twice)
 val repoConfig: RepositoryHandler.() -> Unit = {
     mavenCentral()
-    jcenter()
     mavenLocal()
 }
 
@@ -34,6 +33,12 @@ tasks {
         enabled = false
     }
 }
+
+//kotlin {
+//    jvmToolchain {
+//        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(18))
+//    }
+//}
 
 //
 // configuration shared by all subprojects (does not include the root project)

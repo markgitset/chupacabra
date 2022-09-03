@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.Properties
+import kotlin.io.path.createTempFile
 
 class PropertiesFunKtTest {
 
@@ -35,14 +36,14 @@ class PropertiesFunKtTest {
 
     @Test
     fun readWriteAsProperties() {
-        val tmpFile: File = createTempFile().apply { deleteOnExit() }
+        val tmpFile: File = createTempFile().toFile().apply { deleteOnExit() }
         propMap.writeAsProperties(tmpFile)
         assertEquals(propMap, readPropertiesAsMap(tmpFile))
     }
 
     @Test
     fun readWrite() {
-        val tmpFile: File = createTempFile().apply { deleteOnExit() }
+        val tmpFile: File = createTempFile().toFile().apply { deleteOnExit() }
         properties.write(tmpFile)
         assertEquals(properties, readProperties(tmpFile))
     }

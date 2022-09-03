@@ -3,7 +3,7 @@ package net.markdrew.chupacabra.core
 @Suppress("MemberVisibilityCanPrivate")
 data class Fraction(val numerator: Int, val denominator: Int) : Number() {
     override fun toByte(): Byte = toInt().toByte()
-    override fun toChar(): Char = toDouble().toChar()
+    override fun toChar(): Char = toDouble().toInt().toChar()
     override fun toDouble(): Double = numerator.toDouble() / denominator
     override fun toFloat(): Float = toDouble().toFloat()
     override fun toInt(): Int = toDouble().toInt()
@@ -19,11 +19,12 @@ data class Fraction(val numerator: Int, val denominator: Int) : Number() {
     operator fun plus(addend: Fraction): Fraction =
         if (denominator == addend.denominator) Fraction(numerator + addend.numerator, denominator)
         else Fraction(numerator * addend.denominator + addend.numerator * denominator, denominator * addend.denominator)
-    
+
     operator fun plus(addend: Double): Double = toDouble() + addend
 
-    fun weightedAverage(other: Fraction): Fraction = Fraction(numerator + other.numerator, denominator + other.denominator)
-    
+    fun weightedAverage(other: Fraction): Fraction =
+        Fraction(numerator + other.numerator, denominator + other.denominator)
+
     companion object {
         operator fun Double.times(factor: Fraction): Double = factor * this
         operator fun Double.plus(factor: Fraction): Double = factor + this
