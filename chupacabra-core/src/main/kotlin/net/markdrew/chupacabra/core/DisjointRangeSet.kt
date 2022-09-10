@@ -107,13 +107,12 @@ class DisjointRangeSet internal constructor(
      * { [0,4], [6,10], [12,16], [18,22], [24,28] }  -  [7,20]  =  { [0,4], [6,6], [21,22], [24,28] }
      *                                   { [0,28] }  -  [7,20]  =  { [0,6], [21,28] }
      * </pre>
-     * Note that this method modifies this set.
+     * Note that this method does NOT modify this set.
      *
      * @param subtrahend the range to subtract/remove from this set
      */
-    operator fun minus(subtrahend: IntRange) {
-        map.minus(subtrahend)
-    }
+    operator fun minus(subtrahend: IntRange): DisjointRangeSet =
+        DisjointRangeSet(this).apply { minusAssign(subtrahend) }
 
     /**
      * Removes the given range from this set, modifying any contained ranges that intersect the given range as needed.
@@ -129,6 +128,26 @@ class DisjointRangeSet internal constructor(
     operator fun minusAssign(subtrahend: IntRange) {
         map.minusAssign(subtrahend)
     }
+
+    /**
+     * Builds a new [DisjointRangeSet] that is a copy of this one, except for those entries that are enclosed by any
+     * ranges in the given [DisjointRangeSet].  In other words, it returns this set minus the given set of ranges.
+     *
+     * @param subtrahend the set of ranges to subtract from this set
+     * @return a copy of this set, but without any entries that are enclosed by any ranges of the given set
+     */
+    fun minusEnclosedBy(subtrahend: DisjointRangeSet): DisjointRangeSet =
+        DisjointRangeSet(map.minusEnclosedBy(subtrahend))
+
+    /**
+     * Builds a new [DisjointRangeSet] that is a copy of this one, except for those entries that are enclosed by any
+     * ranges in the given [DisjointRangeMap].  In other words, it returns this set minus the given set of ranges.
+     *
+     * @param subtrahend the set of ranges to subtract from this set
+     * @return a copy of this set, but without any entries that are enclosed by any ranges of the given map
+     */
+    fun minusEnclosedBy(subtrahend: DisjointRangeMap<*>): DisjointRangeSet =
+        DisjointRangeSet(map.minusEnclosedBy(subtrahend))
 
     /**
      * Builds a new [DisjointRangeSet] that is the inverse of this one, optionally constrained by the given

@@ -215,8 +215,8 @@ class DisjointRangeMap<T : Any>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRa
     fun valuesIntersectedBy(r: IntRange): List<T> = internalIntersectedBy(r).values.toList()
 
     /**
-     * Builds a new [DisjointRangeMap] that is a copy of this one, except for those entries that intersect any key ranges
-     * in the given [DisjointRangeMap].  In other words, it returns this map minus the given map.
+     * Builds a new [DisjointRangeMap] that is a copy of this one, except for those entries that intersect any key
+     * ranges in the given [DisjointRangeMap].  In other words, it returns this map minus the given map.
      *
      * @param subtrahend the map to subtract from this one
      * @return a copy of this map, but without any entries that intersect any key ranges of the given subtrahend map
@@ -232,11 +232,12 @@ class DisjointRangeMap<T : Any>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRa
     }
 
     /**
-     * Builds a new [DisjointRangeMap] that is a copy of this one, except for those entries that are enclosed by any key ranges
-     * in the given [DisjointRangeMap].  In other words, it returns this map minus the given map.
+     * Builds a new [DisjointRangeMap] that is a copy of this one, except for those entries that are enclosed by any
+     * key ranges in the given [DisjointRangeMap].  In other words, it returns this map minus the given map.
      *
      * @param subtrahend the map to subtract from this one
-     * @return a copy of this map, but without any entries that are enclosed by any key ranges of the given subtrahend map
+     * @return a copy of this map, but without any entries that are enclosed by any key ranges of the given subtrahend
+     * map
      */
     fun <U : Any> minusEnclosedBy(subtrahend: DisjointRangeMap<U>): DisjointRangeMap<T> {
         val result = DisjointRangeMap<T>()
@@ -249,8 +250,8 @@ class DisjointRangeMap<T : Any>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRa
     }
 
     /**
-     * Builds a new [DisjointRangeMap] that is a copy of this one, except for those entries that are enclosed by any ranges
-     * in the given [DisjointRangeSet].  In other words, it returns this map minus the given set of ranges.
+     * Builds a new [DisjointRangeMap] that is a copy of this one, except for those entries that are enclosed by any
+     * ranges in the given [DisjointRangeSet].  In other words, it returns this map minus the given set of ranges.
      *
      * @param subtrahend the set of ranges to subtract from this map
      * @return a copy of this map, but without any entries that are enclosed by any ranges of the given set
@@ -258,8 +259,22 @@ class DisjointRangeMap<T : Any>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRa
     fun minusEnclosedBy(subtrahend: DisjointRangeSet): DisjointRangeMap<T> = minusEnclosedBy(subtrahend.map)
 
     /**
-     * Removes the given range from this map, modifying any contained ranges that intersect the given range as needed.  A couple
-     * of illustrative examples:
+     * Removes the given range from this map, modifying any contained ranges that intersect the given range as needed.
+     * A couple of illustrative examples:
+     * <pre>
+     * { [0,4], [6,10], [12,16], [18,22], [24,28] }  -  [7,20]  =  { [0,4], [6,6], [21,22], [24,28] }
+     *                                   { [0,28] }  -  [7,20]  =  { [0,6], [21,28] }
+     * </pre>
+     * Note that this method does NOT modify this map.
+     *
+     * @param subtrahend the range to subtract/remove from this map
+     */
+    operator fun minus(subtrahend: IntRange): DisjointRangeMap<T> =
+        DisjointRangeMap(this).apply { minusAssign(subtrahend) }
+
+    /**
+     * Removes the given range from this map, modifying any contained ranges that intersect the given range as needed.
+     * A couple of illustrative examples:
      * <pre>
      * { [0,4], [6,10], [12,16], [18,22], [24,28] }  -  [7,20]  =  { [0,4], [6,6], [21,22], [24,28] }
      *                                   { [0,28] }  -  [7,20]  =  { [0,6], [21,28] }
