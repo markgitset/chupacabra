@@ -9,11 +9,8 @@ import kotlin.math.min
 fun plural(count: Int, singularLabel: String, pluralLabel: String = "${singularLabel}s"): String =
     "$count " + if (count == 1) singularLabel else pluralLabel
 
-fun lengthOfCommonPrefix(s: String, t: String): Int {
-    0 until min(s.length, t.length)
-    s[0]
-    return (s zip t).indexOfFirst { (u, v) -> u != v }
-}
+fun lengthOfCommonPrefix(s: String, t: String): Int =
+    (s zip t).indexOfFirst { (u, v) -> u != v }
 
 /**
  * Computes the Levenshtein distance between two strings using the "iterative with two matrix rows" algorithm referred
