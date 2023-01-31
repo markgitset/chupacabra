@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.palantir.git-version") version "0.15.0"
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.8.0"
 //    id("java-library")
     id("jacoco")
     id("maven-publish")
@@ -24,7 +24,7 @@ version = gitVersion()
 
 // We have to declare (and apply!) 'java-library' and Kotlin plugins above (in the top-level project) if we want to
 // configure them (nicely) below in the subprojects section.  So, the following task configs are only here to suppress
-// top-level build artifacts that are a side-effect of doing this.
+// top-level build artifacts that are a side effect of doing this.
 tasks {
     jar {
         enabled = false
@@ -62,16 +62,15 @@ subprojects {
         val kotlinCoroutinesVersion: String by project
 
         // implementation dependencies are used internally, and not exposed to consumers on their own compile classpath
-        implementation("io.github.microutils:kotlin-logging:2.1.23") // up-to-date as of 2022-08-13
-        implementation(kotlin("stdlib-jdk8"))
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion")
+        implementation("io.github.microutils:kotlin-logging-jvm:3.0.4") // up-to-date as of 2023-01-31
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 
         // Use JUnit test framework
-        testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.9.2") // up-to-date as of 2023-01-31
 
         // note that since this is a logging IMPLEMENTATION, it should ONLY be on the test classpath
         // clients of this library will provide their own SLF4J logging implementation
-        testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3") // up-to-date as of 2018-10-03
+        testRuntimeOnly("ch.qos.logback:logback-classic:1.4.5") // up-to-date as of 2023-01-31
 
     }
 

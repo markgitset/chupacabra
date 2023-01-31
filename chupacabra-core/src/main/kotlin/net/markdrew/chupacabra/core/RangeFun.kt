@@ -48,9 +48,9 @@ fun IntRange.encloses(r: IntRange): Boolean = first <= r.first && last >= r.last
  */
 operator fun IntRange.minus(other: IntRange): List<IntRange> {
     val result = mutableListOf<IntRange>()
-    val r1 = first until min(endExclusive, other.first)
+    val r1 = first until min(last + 1, other.first)
     if (!r1.isEmpty()) result += r1
-    val r2 = max(first, other.endExclusive)..last
+    val r2 = max(first, other.last + 1)..last
     if (!r2.isEmpty()) result += r2
     return result
 }

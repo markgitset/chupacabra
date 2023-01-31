@@ -7,7 +7,6 @@ import com.google.gson.JsonParseException
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
-import net.markdrew.chupacabra.core.endExclusive
 import java.lang.reflect.Type
 
 /**
@@ -33,7 +32,7 @@ class IntRangeAdapter(
     }
 
     override fun serialize(range: IntRange, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-        val end: Int = if (inclusiveEndPoints) range.endInclusive else range.endExclusive
+        val end: Int = if (inclusiveEndPoints) range.last else range.last + 1
         return JsonPrimitive("${range.first}$delimiter$end")
     }
 
