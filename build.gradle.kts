@@ -12,7 +12,6 @@ plugins {
 // declare repositories in which to find dependencies (in a reusable way, since we need it twice)
 val repoConfig: RepositoryHandler.() -> Unit = {
     mavenCentral()
-    mavenLocal()
 }
 
 // compileKotlin task appear to expect a top-level repositories configuration
