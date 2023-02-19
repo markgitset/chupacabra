@@ -4,12 +4,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Index after the last value in this range
- */
-val IntRange.endExclusive: Int
-    get() = last + 1
-
-/**
  * Number of indices in this range, or zero if this is an empty range
  */
 fun IntRange.length(): Int = max(last - first + 1, 0)
