@@ -3,6 +3,10 @@ package net.markdrew.chupacabra.core
 @Suppress("MemberVisibilityCanPrivate")
 data class Fraction(val numerator: Int, val denominator: Int) : Number() {
     override fun toByte(): Byte = toInt().toByte()
+    @Deprecated(
+        "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.",
+        replaceWith = ReplaceWith("this.toInt().toChar()")
+    )
     override fun toChar(): Char = toDouble().toInt().toChar()
     override fun toDouble(): Double = numerator.toDouble() / denominator
     override fun toFloat(): Float = toDouble().toFloat()

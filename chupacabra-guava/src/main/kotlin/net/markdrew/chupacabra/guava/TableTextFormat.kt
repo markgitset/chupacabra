@@ -8,7 +8,7 @@ import kotlin.math.min
 /**
  * Formats a Guava [Table] as text
  */
-class TableTextFormat<R, C, V>(
+class TableTextFormat<R : Any, C, V>(
     val columnSeparator: String = " |",
     val maxColumnWidth: Int = Int.MAX_VALUE,
     val maxTableWidth: Int = 200,
@@ -112,7 +112,7 @@ class TableTextFormat<R, C, V>(
 
     companion object {
 
-        fun <R, C, V> format(table: Table<R, C, V?>): String = TableTextFormat<R, C, V?>().format(table)
+        fun <R : Any, C, V> format(table: Table<R, C, V?>): String = TableTextFormat<R, C, V?>().format(table)
 
         fun numberedColKeyFun(startAt: Int = 1): (colNum: Int, colLabel: String) -> String =
             { colNum, _ -> (startAt + colNum).toString() }

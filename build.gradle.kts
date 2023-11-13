@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.palantir.git-version") version "0.15.0"
-    kotlin("jvm") version "1.8.0"
+    id("com.palantir.git-version") version "3.0.0"
+    kotlin("jvm") version "1.9.20"
 //    id("java-library")
     id("jacoco")
     id("maven-publish")
@@ -26,9 +26,6 @@ version = gitVersion()
 // top-level build artifacts that are a side effect of doing this.
 tasks {
     jar {
-        enabled = false
-    }
-    inspectClassesForKotlinIC {
         enabled = false
     }
 }
@@ -66,6 +63,7 @@ subprojects {
 
         // Use JUnit test framework
         testImplementation("org.junit.jupiter:junit-jupiter:5.9.2") // up-to-date as of 2023-01-31
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
         // note that since this is a logging IMPLEMENTATION, it should ONLY be on the test classpath
         // clients of this library will provide their own SLF4J logging implementation
@@ -73,12 +71,12 @@ subprojects {
 
     }
 
-//    java {
-//        val targetJavaVersion: String by project
-//        val targetJavaVersionObj = JavaVersion.toVersion(targetJavaVersion)
-//        sourceCompatibility = targetJavaVersionObj
-//        targetCompatibility = targetJavaVersionObj
-//    }
+    java {
+        val targetJavaVersion: String by project
+        val targetJavaVersionObj = JavaVersion.toVersion(targetJavaVersion)
+        sourceCompatibility = targetJavaVersionObj
+        targetCompatibility = targetJavaVersionObj
+    }
 
     tasks {
 

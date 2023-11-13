@@ -7,7 +7,7 @@ import com.google.common.html.HtmlEscapers
 /**
  * Formats a Guava [Table] as HTML
  */
-class TableHtmlFormat<R, C, V>(
+class TableHtmlFormat<R : Any, C, V>(
     val caption: String = "",
     val columnsLabel: String = "",
     val rowsLabel: String = "",
@@ -75,7 +75,7 @@ class TableHtmlFormat<R, C, V>(
 
     companion object {
 
-        fun <R, C, V> format(table: Table<R, C, V?>): String = TableHtmlFormat<R, C, V>().format(table)
+        fun <R : Any, C, V> format(table: Table<R, C, V?>): String = TableHtmlFormat<R, C, V>().format(table)
 
         @JvmStatic
         fun main(args: Array<String>) {

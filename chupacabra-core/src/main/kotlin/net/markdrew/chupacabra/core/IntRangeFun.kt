@@ -54,6 +54,6 @@ fun IntRange.splitBefore(splitOffset: Int): Pair<IntRange, IntRange> {
     return first until splitOffset to splitOffset..last
 }
 
-val rangeFirstLastComparator: Comparator<IntRange> by lazy { compareBy<IntRange>({ it.first }, { it.last }) }
+val rangeFirstLastComparator: Comparator<IntRange> by lazy { compareBy({ it.first }, { it.last }) }
 
 fun ClosedRange<*>.toMathString(): String = "[$start, $endInclusive]"
