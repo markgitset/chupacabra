@@ -1,12 +1,10 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("com.palantir.git-version") version "3.0.0"
-    kotlin("jvm") version "1.9.20"
-//    id("java-library")
+    val kotlinVersion by System.getProperties()
+    kotlin("jvm") version kotlinVersion.toString()
     id("jacoco")
     id("maven-publish")
-    //id("org.jetbrains.dokka") version "0.9.18" apply false
+    id("org.jetbrains.dokka") version "1.9.20" apply false
 }
 
 // declare repositories in which to find dependencies (in a reusable way, since we need it twice)
@@ -30,11 +28,9 @@ tasks {
     }
 }
 
-//kotlin {
-//    jvmToolchain {
-//        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(18))
-//    }
-//}
+kotlin {
+    jvmToolchain(21)
+}
 
 //
 // configuration shared by all subprojects (does not include the root project)
@@ -46,7 +42,7 @@ subprojects {
     apply(plugin = "jacoco")
     apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
-    //apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "org.jetbrains.dokka")
 
     // use the version from the rootProject (which we already determined via git)
     version = rootProject.version
@@ -55,45 +51,26 @@ subprojects {
     repositories(repoConfig)
 
     dependencies {
-        val kotlinCoroutinesVersion: String by project
-
         // implementation dependencies are used internally, and not exposed to consumers on their own compile classpath
-        implementation("io.github.microutils:kotlin-logging-jvm:3.0.4") // up-to-date as of 2023-01-31
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+        implementation("io.github.microutils:kotlin-logging-jvm:3.0.5") // up-to-date as of 2024-04-20
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 
         // Use JUnit test framework
-        testImplementation("org.junit.jupiter:junit-jupiter:5.9.2") // up-to-date as of 2023-01-31
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.2") // up-to-date as of 2024-04-20
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
         // note that since this is a logging IMPLEMENTATION, it should ONLY be on the test classpath
         // clients of this library will provide their own SLF4J logging implementation
-        testRuntimeOnly("ch.qos.logback:logback-classic:1.4.5") // up-to-date as of 2023-01-31
-
-    }
-
-    java {
-        val targetJavaVersion: String by project
-        val targetJavaVersionObj = JavaVersion.toVersion(targetJavaVersion)
-        sourceCompatibility = targetJavaVersionObj
-        targetCompatibility = targetJavaVersionObj
+        testRuntimeOnly("ch.qos.logback:logback-classic:1.5.6") // up-to-date as of 2024-04-20
     }
 
     tasks {
-
-        /*
-         * Some Kotlin compiler configuration
-         */
-        val kotlinJvmTargetVersion: String by project
-        withType<KotlinCompile>().configureEach {
-            kotlinOptions {
-                jvmTarget = kotlinJvmTargetVersion
-            }
-        }
 
         // build a tests jar
         register<Jar>("testJar") {
             description = "Assembles a jar archive containing the test classes and source code."
             group = "Build"
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             from(sourceSets["test"].allSource)
             from(sourceSets["test"].output)
             archiveClassifier.set("tests")
@@ -112,11 +89,6 @@ subprojects {
         check {
             dependsOn(jacocoTestReport)
         }
-
-        //dokka {
-        //    outputFormat = "html"
-        //    outputDirectory = "$buildDir/javadoc"
-        //}
 
     }
 
