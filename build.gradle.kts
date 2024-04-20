@@ -1,7 +1,7 @@
 plugins {
     id("com.palantir.git-version") version "3.0.0"
-    val kotlinVersion by System.getProperties()
-    kotlin("jvm") version kotlinVersion.toString()
+    val kotlinVersion: String by System.getProperties()
+    kotlin("jvm") version kotlinVersion
     id("jacoco")
     id("maven-publish")
     id("org.jetbrains.dokka") version "1.9.20" apply false
@@ -29,7 +29,8 @@ tasks {
 }
 
 kotlin {
-    jvmToolchain(21)
+    val jvmVersion: String by project.properties
+    jvmToolchain(jvmVersion.toInt())
 }
 
 //
