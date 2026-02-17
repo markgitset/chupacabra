@@ -16,3 +16,11 @@ An extension of Chupacabra Core (depends on chupacabra-core) that adds Guava-rel
 ## Chupacabra CLI (markdrew.net:chupacabra-cli)
 An extension of Chupacabra Core (depends on chupacabra-core) that adds utilities for building
 user-friendly command-line applications.
+
+
+## Publishing artifacts
+Artifacts are automatically published for downstream projects using the `Publish artifacts` GitHub Actions workflow (`.github/workflows/publish-artifacts.yml`).
+
+- On every pushed tag matching `v*`, all modules are published to GitHub Packages for this repository.
+- You can also trigger the workflow manually with `workflow_dispatch`.
+- The workflow additionally uploads all built JARs as a workflow artifact named `chupacabra-jars`.

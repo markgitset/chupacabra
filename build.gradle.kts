@@ -101,6 +101,25 @@ subprojects {
                 artifact(tasks["testJar"]) // tests artifact
             }
         }
+
+        repositories {
+            val githubActor = providers.gradleProperty("gpr.user")
+                .orElse(providers.environmentVariable("GITHUB_ACTOR"))
+            val githubToken = providers.gradleProperty("gpr.key")
+                .orElse(providers.environmentVariable("GITHUB_TOKEN"))
+            val githubRepository = providers.environmentVariable("GITHUB_REPOSITORY")
+
+            if (githubRepository.isPresent) {
+                maven {
+                    name = "GitHubPackages"
+                    url = uri("https://maven.pkg.github.com/${githubRepository.get()}")
+                    credentials {
+                        username = githubActor.orNull
+                        password = githubToken.orNull
+                    }
+                }
+            }
+        }
     }
 
 }
