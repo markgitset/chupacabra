@@ -1,0 +1,6 @@
+* text=auto
+
+# Explicitly set Gradle wrapper line endings
+gradlew text eol=lf
+gradlew.bat text eol=crlf
+
