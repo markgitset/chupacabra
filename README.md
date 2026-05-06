@@ -1,4 +1,5 @@
 # Chupacabra
+[![](https://www.jitpack.io/v/markgitset/chupacabra.svg)](https://www.jitpack.io/#markgitset/chupacabra)
 
 Chupacabra is a collection of Kotlin libraries containing general-purpose utilities.
 Nothing with many library dependencies belongs in here.
