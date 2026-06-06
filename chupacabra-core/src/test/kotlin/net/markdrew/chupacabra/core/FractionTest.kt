@@ -20,15 +20,9 @@ internal class FractionTest {
         assertEquals(Fraction(11, 19), listOf(Fraction(6, 12), Fraction(2, 3), Fraction(3, 4)).weightedAverage())
     }
 
-//    @Test
-//    fun times1() {
-//    }
-//
-//    @Test
-//    fun plus() {
-//    }
-//
-//    @Test
-//    fun plus1() {
-//    }
+    @Test
+    fun plus() {
+        assertEquals(Fraction(3, 4), Fraction(1, 4) + Fraction(2, 4))
+        assertEquals(Fraction(6, 8), Fraction(1, 2) + Fraction(1, 4))
+    }
 }
