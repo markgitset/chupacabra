@@ -10,7 +10,7 @@ fun plural(count: Int, singularLabel: String, pluralLabel: String = "${singularL
     "$count " + if (count == 1) singularLabel else pluralLabel
 
 fun lengthOfCommonPrefix(s: String, t: String): Int =
-    (s zip t).indexOfFirst { (u, v) -> u != v }
+    s.commonPrefixWith(t).length
 
 /**
  * Computes the Levenshtein distance between two strings using the "iterative with two matrix rows" algorithm referred

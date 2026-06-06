@@ -20,6 +20,18 @@ internal class StringFunKtTest {
     }
 
     @Test
+    fun testLengthOfCommonPrefix() {
+        assertEquals(3, lengthOfCommonPrefix("abc", "abc"))
+        assertEquals(2, lengthOfCommonPrefix("abc", "ab"))
+        assertEquals(2, lengthOfCommonPrefix("ab", "abc"))
+        assertEquals(0, lengthOfCommonPrefix("abc", "def"))
+        assertEquals(0, lengthOfCommonPrefix("abc", ""))
+        assertEquals(0, lengthOfCommonPrefix("", "abc"))
+        assertEquals(0, lengthOfCommonPrefix("", ""))
+        assertEquals(1, lengthOfCommonPrefix("a", "abc"))
+    }
+
+    @Test
     @Suppress("SpellCheckingInspection")
     fun testLevenshtein() {
         assertEquals(3, levenshtein("dog", ""))
