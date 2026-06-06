@@ -100,13 +100,14 @@ class StringSubsequenceKernel
         val sLength = s.length
         val tLength = t.length
         var rawKernel = 0.0
+        val kPrimeCache = HashMap<Triple<Int, Int, Int>, Double>()
         for (i in nMinusOne until sLength) {
             val sPrefix = s.substring(0, i)
             val sSuffix = s[i]
             for (j in nMinusOne until tLength) {
                 if (t[j] == sSuffix) {
                     //println("  rawKernel += " + kPrime(nMinusOne, sPrefix, t.substring(0, j)))
-                    rawKernel += kPrime(nMinusOne, sPrefix, t.substring(0, j))
+                    rawKernel += kPrime(nMinusOne, sPrefix, t.substring(0, j), kPrimeCache)
                 }
             }
         }
@@ -122,13 +123,17 @@ class StringSubsequenceKernel
      * @param t another string
      * @return K'n(s,t)
      */
-    private fun kPrime(n: Int, s: String, t: String): Double {
+    private fun kPrime(n: Int, s: String, t: String, cache: MutableMap<Triple<Int, Int, Int>, Double>): Double {
         // by definition kPrime = 1.0 when n = 0
         if (n == 0) return 1.0
 
-        val nMinusOne = n - 1
         val sLength = s.length
         val tLength = t.length
+        val key = Triple(n, sLength, tLength)
+        val cached = cache[key]
+        if (cached != null) return cached
+
+        val nMinusOne = n - 1
         var sum = 0.0
         for (i in nMinusOne until sLength) {
             // split s into sPrefix and sSuffix
@@ -140,7 +145,7 @@ class StringSubsequenceKernel
                 if (t[j] == sSuffix) {
                     kPrimePrime += lambda * kPrime(
                         nMinusOne,
-                        sPrefix, t.substring(0, j)
+                        sPrefix, t.substring(0, j), cache
                     )
                     //println("      kPrimePrime += $lambda * ${kPrime(nMinusOne, sPrefix, t.substring(0, j))}")
                 }
@@ -150,6 +155,7 @@ class StringSubsequenceKernel
             //println("    sum = $lambda * $sum + $kPrimePrime")
             sum = lambda * sum + kPrimePrime
         }
+        cache[key] = sum
         return sum
     }
 
