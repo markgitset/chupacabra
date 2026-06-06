@@ -31,8 +31,7 @@ object SslUtils {
         keyStorePassword: CharArray? = null, 
         trustStore: KeyStore? = null
     ): SSLContext = keyStore?.let {
-        SSLContext.getInstance("TLSv1.2").apply {
-            //        SSLContext.getInstance("TLS").apply { 
+        SSLContext.getInstance("TLS").apply {
             val keyManagers = initKeyManagers(keyStore, keyStorePassword)
             val trustManagers: Array<X509TrustManager?> = arrayOf(initX509TrustManager(trustStore))
             init(keyManagers, trustManagers, null)
