@@ -20,6 +20,27 @@ internal class RangeFunKtTest {
     }
 
     @Test
+    fun encloses() {
+        // Happy paths (true)
+        assertTrue((1..5).encloses(2..4)) // strictly inside
+        assertTrue((1..5).encloses(1..4)) // sharing start
+        assertTrue((1..5).encloses(2..5)) // sharing end
+        assertTrue((1..5).encloses(1..5)) // exact match
+
+        // Edge cases & Error conditions (false)
+        assertFalse((2..4).encloses(1..5)) // smaller range does not enclose larger range
+        assertFalse((1..3).encloses(2..4)) // partial overlap, start is inside but end is outside
+        assertFalse((3..5).encloses(2..4)) // partial overlap, start is outside but end is inside
+        assertFalse((1..2).encloses(4..5)) // disjoint, completely before
+        assertFalse((4..5).encloses(1..2)) // disjoint, completely after
+
+        // EMPTY cases
+        assertTrue((1..5).encloses(IntRange.EMPTY))
+        assertFalse(IntRange.EMPTY.encloses(1..5))
+        assertTrue(IntRange.EMPTY.encloses(IntRange.EMPTY))
+    }
+
+    @Test
     fun intersection() {
         assertEquals(3..5, 1..5 intersect 3..7)
         assertEquals(3..5, 3..7 intersect 1..5)
