@@ -30,14 +30,12 @@ import javax.swing.WindowConstants
  * if (!"pass123".equals(prompter.getPasswordString())) throw new Exception("Wrong password!")
  * prompter.clearPassword()
  * println("SUCCESS!")
- * println(prompter.getPasswordString())
  *
  * // another way
  * prompter.useAndClearPassword { p ->
  *     if (!"pass123".equals(new String(p))) throw new RuntimeException("Wrong password!")
  *     println("SUCCESS!")
  * }
- * println(prompter.getPasswordString())
  * </pre>
  */
 class PasswordPrompter
@@ -207,14 +205,12 @@ class PasswordPrompter
             if ("pass123" != prompter.passwordString) throw Exception("Wrong password!")
             prompter.clearPassword()
             println("SUCCESS!")
-            println(prompter.passwordString)
 
             // another way
             prompter.useAndClearPassword { p ->
                 if ("pass123" != String(p)) throw RuntimeException("Wrong password!")
                 println("SUCCESS!")
             }
-            println(prompter.passwordString)
         }
     }
 
