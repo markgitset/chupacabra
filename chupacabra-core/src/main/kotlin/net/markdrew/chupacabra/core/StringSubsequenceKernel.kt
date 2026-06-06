@@ -25,7 +25,6 @@ class StringSubsequenceKernel
 
     /*
      * TODO add support for caching (especially for normalization)?
-     * TODO can this be optimized when s == t (especially for normalization)?
      * TODO support retaining/returning intermediate values
      * TODO change to use char[] instead of String for performance?
      * TODO refactor remaining recursion as loops for performance
@@ -60,6 +59,7 @@ class StringSubsequenceKernel
      * @return the SSK, normalized by the string lengths
      */
     fun normalizedKernel(subseqLen: Int, s: String, t: String): Double {
+        if (s == t) return if (s.length < subseqLen) 0.0 else 1.0
         val raw = rawKernel(subseqLen, s, t)
         // This check makes the computation more efficient and avoids dividing by zero when |s| or |t| < n.
         return if (raw < 0.0000001) 0.0 else raw / Math.sqrt(rawKernel(subseqLen, s) * rawKernel(subseqLen, t))
