@@ -32,6 +32,28 @@ internal class RangeFunKtTest {
     }
 
     @Test
+    fun enclose() {
+        // Ranges that overlap
+        assertEquals(1..7, 1..5 enclose 3..7)
+        assertEquals(1..7, 3..7 enclose 1..5)
+
+        // Ranges that encompass one another
+        assertEquals(1..7, 1..7 enclose 3..5)
+        assertEquals(1..7, 3..5 enclose 1..7)
+
+        // Ranges that are far apart
+        assertEquals(1..7, 1..3 enclose 5..7)
+        assertEquals(1..7, 5..7 enclose 1..3)
+
+        // Disjoint but adjacent
+        assertEquals(1..4, 1..2 enclose 3..4)
+
+        // Empty ranges
+        assertEquals(1..3, IntRange.EMPTY enclose 1..3)
+        assertEquals(1..7, 5..7 enclose IntRange.EMPTY)
+    }
+
+    @Test
     fun minus() {
         assertEquals(listOf(1..2), (1..5) - (3..7))
         assertEquals(listOf(6..7), (3..7) - (1..5))
