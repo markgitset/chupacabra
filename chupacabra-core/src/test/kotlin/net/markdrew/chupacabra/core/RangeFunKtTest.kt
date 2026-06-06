@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class RangeFunKtTest {
 
@@ -55,5 +56,15 @@ internal class RangeFunKtTest {
         assertEquals(5, (1..5).length())
         assertEquals(1, (3..3).length())
         assertEquals(0, (5..2).length())
+    }
+
+    @Test
+    fun splitBefore() {
+        assertEquals(1..2 to 3..5, (1..5).splitBefore(3))
+        assertEquals(1..4 to 5..5, (1..5).splitBefore(5))
+
+        assertThrows<IllegalArgumentException> { (1..5).splitBefore(1) }
+        assertThrows<IllegalArgumentException> { (1..5).splitBefore(6) }
+        assertThrows<IllegalArgumentException> { (1..5).splitBefore(0) }
     }
 }
