@@ -30,7 +30,9 @@ infix fun IntRange.intersect(other: IntRange): IntRange =
  * Returns a new range consisting of the union of this range and [other]
  */
 infix fun IntRange.enclose(other: IntRange): IntRange =
-    min(first, other.first)..max(last, other.last)
+    if (this.isEmpty()) other
+    else if (other.isEmpty()) this
+    else min(first, other.first)..max(last, other.last)
 
 /**
  * Returns true if, and only if, every index in the given range, [r], is also in this range

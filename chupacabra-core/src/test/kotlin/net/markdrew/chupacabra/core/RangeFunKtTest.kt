@@ -50,7 +50,8 @@ internal class RangeFunKtTest {
 
         // Empty ranges
         assertEquals(1..3, IntRange.EMPTY enclose 1..3)
-        assertEquals(1..7, 5..7 enclose IntRange.EMPTY)
+        assertEquals(5..7, 5..7 enclose IntRange.EMPTY)
+        assertEquals(IntRange.EMPTY, IntRange.EMPTY enclose IntRange.EMPTY)
     }
 
     @Test
