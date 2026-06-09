@@ -336,38 +336,44 @@ class DisjointRangeMap<T : Any>(vararg pairs: Pair<IntRange, T>) : TreeMap<IntRa
 
         // first pass handles intersections and leftovers from the other map
         for ((otherRange, otherValue) in other.entries) {
-
-            var remainder = listOf(otherRange)
+            var lastIntersectedEnd = if (otherRange.first > Int.MIN_VALUE) otherRange.first - 1 else Int.MIN_VALUE
 
             // get this map's entries intersected by the other map's key
             for ((thisRange, thisValue) in internalIntersectedBy(otherRange)) {
                 val newRange: IntRange = thisRange intersect otherRange
                 result[newRange] = valueTransform(thisValue, otherValue)
-                remainder = remainder.flatMap { it - newRange }
+
+                if (newRange.first > Int.MIN_VALUE && lastIntersectedEnd + 1 <= newRange.first - 1) {
+                    result[IntRange(lastIntersectedEnd + 1, newRange.first - 1)] = valueTransform(null, otherValue)
+                }
+                lastIntersectedEnd = newRange.last
+                if (lastIntersectedEnd == Int.MAX_VALUE) break
             }
 
-            for (leftoverRange in remainder) {
-                result[leftoverRange] = valueTransform(null, otherValue)
+            if (lastIntersectedEnd < Int.MAX_VALUE && lastIntersectedEnd + 1 <= otherRange.last) {
+                result[IntRange(lastIntersectedEnd + 1, otherRange.last)] = valueTransform(null, otherValue)
             }
-                
         }
 
         // second pass only handles leftovers from this map
         for ((thisRange, thisValue) in entries) {
-
-            var remainder = listOf(thisRange)
+            var lastIntersectedEnd = if (thisRange.first > Int.MIN_VALUE) thisRange.first - 1 else Int.MIN_VALUE
 
             // get other map's entries intersected by this map's key
             for ((otherRange, _) in other.internalIntersectedBy(thisRange)) {
                 val newRange: IntRange = thisRange intersect otherRange
                 // don't need to do the intersection here since it was handled in the first pass
-                remainder = remainder.flatMap { it - newRange }
+
+                if (newRange.first > Int.MIN_VALUE && lastIntersectedEnd + 1 <= newRange.first - 1) {
+                    result[IntRange(lastIntersectedEnd + 1, newRange.first - 1)] = valueTransform(thisValue, null)
+                }
+                lastIntersectedEnd = newRange.last
+                if (lastIntersectedEnd == Int.MAX_VALUE) break
             }
 
-            for (leftoverRange in remainder) {
-                result[leftoverRange] = valueTransform(thisValue, null)
+            if (lastIntersectedEnd < Int.MAX_VALUE && lastIntersectedEnd + 1 <= thisRange.last) {
+                result[IntRange(lastIntersectedEnd + 1, thisRange.last)] = valueTransform(thisValue, null)
             }
-
         }
         return result
     }
