@@ -101,12 +101,10 @@ class StringSubsequenceKernel
         val tLength = t.length
         var rawKernel = 0.0
         for (i in nMinusOne until sLength) {
-            val sPrefix = s.substring(0, i)
             val sSuffix = s[i]
             for (j in nMinusOne until tLength) {
                 if (t[j] == sSuffix) {
-                    //println("  rawKernel += " + kPrime(nMinusOne, sPrefix, t.substring(0, j)))
-                    rawKernel += kPrime(nMinusOne, sPrefix, t.substring(0, j))
+                    rawKernel += kPrime(nMinusOne, s, i, t, j)
                 }
             }
         }
@@ -122,32 +120,21 @@ class StringSubsequenceKernel
      * @param t another string
      * @return K'n(s,t)
      */
-    private fun kPrime(n: Int, s: String, t: String): Double {
-        // by definition kPrime = 1.0 when n = 0
+    private fun kPrime(n: Int, s: String, sEnd: Int, t: String, tEnd: Int): Double {
         if (n == 0) return 1.0
 
         val nMinusOne = n - 1
-        val sLength = s.length
-        val tLength = t.length
         var sum = 0.0
-        for (i in nMinusOne until sLength) {
-            // split s into sPrefix and sSuffix
-            val sPrefix = s.substring(0, i)
+        for (i in nMinusOne until sEnd) {
             val sSuffix = s[i]
 
             var kPrimePrime = 0.0
-            for (j in nMinusOne until tLength) {
+            for (j in nMinusOne until tEnd) {
                 if (t[j] == sSuffix) {
-                    kPrimePrime += lambda * kPrime(
-                        nMinusOne,
-                        sPrefix, t.substring(0, j)
-                    )
-                    //println("      kPrimePrime += $lambda * ${kPrime(nMinusOne, sPrefix, t.substring(0, j))}")
+                    kPrimePrime += lambda * kPrime(nMinusOne, s, i, t, j)
                 }
-                //println("      kPrimePrime *= $lambda")
                 kPrimePrime *= lambda
             }
-            //println("    sum = $lambda * $sum + $kPrimePrime")
             sum = lambda * sum + kPrimePrime
         }
         return sum
