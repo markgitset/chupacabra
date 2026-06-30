@@ -40,7 +40,7 @@ class TableTextFormat<R : Any, C, V>(
     private fun formatColHeader(colNum: Int, colHeader: Any?): String =
         formatColHeader(colHeader).let { colKeyFun?.invoke(colNum, it) ?: it }
 
-    fun format(table: Table<R, C, V?>): String {
+    fun format(table: Table<R, C, out V?>): String {
         val rowKeys = table.rowKeySet()
         val colKeys = table.columnKeySet()
         val nCols = colKeys.size

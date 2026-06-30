@@ -31,7 +31,7 @@ class TableHtmlFormat<R : Any, C, V>(
     private fun formatValue(value: V?): String = escaper.escape(formatValueFun(value).toString().trimStart())
     private fun formatHeader(header: Any?): String = escaper.escape(formatHeaderFun(header).toString().trimStart())
 
-    fun format(table: Table<R, C, V?>): String {
+    fun format(table: Table<R, C, out V?>): String {
         val rowKeys = table.rowKeySet()
         val colKeys = table.columnKeySet()
         val nCols = colKeys.size
@@ -75,7 +75,7 @@ class TableHtmlFormat<R : Any, C, V>(
 
     companion object {
 
-        fun <R : Any, C, V> format(table: Table<R, C, V?>): String = TableHtmlFormat<R, C, V>().format(table)
+        fun <R : Any, C, V> format(table: Table<R, C, out V?>): String = TableHtmlFormat<R, C, V>().format(table)
 
         @JvmStatic
         fun main(args: Array<String>) {

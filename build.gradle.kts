@@ -1,10 +1,10 @@
 plugins {
-    id("com.palantir.git-version") version "3.0.0"
+    id("com.palantir.git-version") version "5.0.0"
     val kotlinVersion: String by System.getProperties()
     kotlin("jvm") version kotlinVersion
     id("jacoco")
     id("maven-publish")
-    id("org.jetbrains.dokka") version "1.9.20" apply false
+    id("org.jetbrains.dokka") version "2.2.0" apply false
 }
 
 // declare repositories in which to find dependencies (in a reusable way, since we need it twice)
@@ -16,7 +16,8 @@ val repoConfig: RepositoryHandler.() -> Unit = {
 repositories(repoConfig)
 
 // set the project version from tags and commits in Git repository
-val gitVersion: groovy.lang.Closure<String> by extra
+@Suppress("UNCHECKED_CAST")
+val gitVersion = extra["gitVersion"] as groovy.lang.Closure<String>
 version = gitVersion()
 
 // We have to declare (and apply!) 'java-library' and Kotlin plugins above (in the top-level project) if we want to
@@ -29,7 +30,7 @@ tasks {
 }
 
 kotlin {
-    val jvmVersion: String by project.properties
+    val jvmVersion = project.property("jvmVersion") as String
     jvmToolchain(jvmVersion.toInt())
 }
 
@@ -53,16 +54,16 @@ subprojects {
 
     dependencies {
         // implementation dependencies are used internally, and not exposed to consumers on their own compile classpath
-        implementation("io.github.microutils:kotlin-logging-jvm:3.0.5") // up-to-date as of 2024-04-20
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+        implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
 
         // Use JUnit test framework
-        testImplementation("org.junit.jupiter:junit-jupiter:5.10.2") // up-to-date as of 2024-04-20
+        testImplementation("org.junit.jupiter:junit-jupiter:6.1.0")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
         // note that since this is a logging IMPLEMENTATION, it should ONLY be on the test classpath
         // clients of this library will provide their own SLF4J logging implementation
-        testRuntimeOnly("ch.qos.logback:logback-classic:1.5.6") // up-to-date as of 2024-04-20
+        testRuntimeOnly("ch.qos.logback:logback-classic:1.5.37")
     }
 
     tasks {

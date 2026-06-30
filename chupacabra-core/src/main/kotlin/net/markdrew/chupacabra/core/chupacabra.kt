@@ -1,7 +1,7 @@
 package net.markdrew.chupacabra.core
 
-import mu.KLogger
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.math.exp
 import kotlin.math.ln
 import kotlin.math.ln1p
@@ -26,10 +26,10 @@ fun <T> T.onShutdown(shutdownFun: T.() -> Unit): T {
  */
 fun <T : AutoCloseable> T.closeOnShutdown(resourceName: String = toString()): T = this.onShutdown {
     try {
-        logger.info("Shutting down $resourceName...")
+        logger.info { "Shutting down $resourceName..." }
         close()
     } catch (e: Exception) {
-        logger.error("Encountered a problem closing $resourceName.", e)
+        logger.error(e) { "Encountered a problem closing $resourceName." }
     }
 }
 

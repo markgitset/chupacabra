@@ -1,6 +1,6 @@
 package net.markdrew.chupacabra.cli
 
-import me.tongfei.progressbar.ProgressBar
+import me.tongfei.progressbar.ProgressBarBuilder
 import me.tongfei.progressbar.ProgressBarStyle.COLORFUL_UNICODE_BLOCK
 import net.markdrew.chupacabra.core.parallelMap
 
@@ -21,8 +21,13 @@ fun <T, U> Collection<T>.parallelMap(showProgress: Boolean, f: suspend (T) -> U)
  * processing. After all elements have been processed, returns the mapped collection.
  */
 fun <T, U> Collection<T>.parallelMapWithProgress(f: suspend (T) -> U): List<U> =
-    ProgressBar(
-        "processing files", size.toLong(), 500, System.err, COLORFUL_UNICODE_BLOCK, " files", 1, true
-    ).use { pb ->
+    ProgressBarBuilder().apply {
+        setTaskName("processing files")
+        setInitialMax(size.toLong())
+        setUpdateIntervalMillis(500)
+        setStyle(COLORFUL_UNICODE_BLOCK)
+        setUnit(" files", 1)
+        showSpeed()
+    }.build().use { pb ->
         parallelMap({ pb.step() }) { f(it) }
     }

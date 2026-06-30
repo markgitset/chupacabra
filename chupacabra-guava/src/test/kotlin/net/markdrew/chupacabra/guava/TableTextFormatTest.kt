@@ -177,7 +177,7 @@ internal class TableTextFormatTest {
     
     @Test
     fun `summary row`() {
-        val table = TreeBasedTable.create<String, String, Int?>()
+        val table = TreeBasedTable.create<String, String, Int>()
         table.put("row1", "c1", 2)
         table.put("row2", "O", 3)
         table.put("row2", "c1", 49)

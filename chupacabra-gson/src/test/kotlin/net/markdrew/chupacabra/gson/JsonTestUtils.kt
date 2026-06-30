@@ -43,7 +43,7 @@ object JsonTestUtils {
 
     private val prettyGson = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
 
-    fun pretty(json: String): String = pretty(JsonParser().parse(json))
+    fun pretty(json: String): String = pretty(JsonParser.parseString(json))
 
     fun pretty(json: JsonElement): String = prettyGson.toJson(json)
 
